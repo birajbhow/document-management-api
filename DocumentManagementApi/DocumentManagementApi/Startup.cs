@@ -36,7 +36,7 @@ namespace DocumentManagementApi
 
             services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"), ServiceLifetime.Singleton);
             services.AddSingleton<IFileValidator, FileValidator>();
-            services.AddSingleton<IFileProcessor, FileProcessor>();
+            services.AddSingleton<IDocumentRepository, DocumentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

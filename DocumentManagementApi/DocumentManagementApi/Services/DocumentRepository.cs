@@ -11,15 +11,36 @@ using System.Threading.Tasks;
 
 namespace DocumentManagementApi.Services
 {
-    public class FileProcessor : IFileProcessor
+    public class DocumentRepository : IDocumentRepository
     {
         private readonly AppDbContext _context;
-        private readonly ILogger<FileProcessor> _logger;
+        private readonly ILogger<DocumentRepository> _logger;
 
-        public FileProcessor(AppDbContext context, ILogger<FileProcessor> logger)
+        public DocumentRepository(AppDbContext context, ILogger<DocumentRepository> logger)
         {
             _context = context;
             _logger = logger;
+        }
+
+        public async Task Delete(AppFile appFile)
+        {
+            _context.File.Remove(appFile);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<AppFile> Find(string documentId)
+        {
+            return await Task.Run(() => _context.File.FirstOrDefault(f => f.Id == documentId));
+        }
+
+        public async Task<IEnumerable<Document>> GetAll()
+        {
+            return await Task.Run(() => _context.File.Select(f => new Document
+            {
+                Id = f.Id,
+                Name = f.EncodedName,
+                Size = f.Size
+            }).AsEnumerable());
         }
 
         public async Task<bool> Process(IFormFile formFile)
@@ -46,7 +67,7 @@ namespace DocumentManagementApi.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, 
-                    $"{nameof(FileProcessor)}: Error occurred processing the file {formFile.FileName}");                
+                    $"{nameof(DocumentRepository)}: Error occurred processing the file {formFile.FileName}");                
             }
 
             return false;
