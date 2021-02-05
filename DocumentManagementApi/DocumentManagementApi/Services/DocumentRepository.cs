@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace DocumentManagementApi.Services
 {
+    /// <summary>
+    /// This repository manages all the operations regarding document management
+    /// </summary>
     public class DocumentRepository : IDocumentRepository
     {
         private readonly AppDbContext _context;
@@ -22,17 +25,31 @@ namespace DocumentManagementApi.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Delete a document object from In-Memory DB
+        /// </summary>
+        /// <param name="appFile"></param>
+        /// <returns></returns>
         public async Task Delete(AppFile appFile)
         {
             _context.File.Remove(appFile);
             await _context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Find a document object by id from In-Memory DB
+        /// </summary>
+        /// <param name="documentId"></param>
+        /// <returns></returns>
         public async Task<AppFile> Find(string documentId)
         {
             return await Task.Run(() => _context.File.FirstOrDefault(f => f.Id == documentId));
         }
 
+        /// <summary>
+        /// Returns summary information about all the documents
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Document>> GetAll()
         {
             return await Task.Run(() => _context.File.Select(f => new Document
@@ -43,6 +60,11 @@ namespace DocumentManagementApi.Services
             }).AsEnumerable());
         }
 
+        /// <summary>
+        /// Reads the file content and store it in an object in an In-Memory DB
+        /// </summary>
+        /// <param name="formFile">File content sent with Request</param>
+        /// <returns>true, if processed successfully else false</returns>
         public async Task<bool> Process(IFormFile formFile)
         {
             try
@@ -54,6 +76,7 @@ namespace DocumentManagementApi.Services
                 {
                     Id = Guid.NewGuid().ToString(),
                     Content = memoryStream.ToArray(),
+                    ContentType = formFile.ContentType,
                     EncodedName = WebUtility.HtmlEncode(formFile.FileName),
                     Size = formFile.Length,
                     UploadDate = DateTime.UtcNow

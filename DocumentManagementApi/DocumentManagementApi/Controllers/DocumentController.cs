@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DocumentManagementApi.Controllers
@@ -71,6 +72,25 @@ namespace DocumentManagementApi.Controllers
                 _logger.LogError(ex, $"Error occurred during deleting a document {docuementId}");
             }
             return Problem("Error occurred deleting a document!", statusCode: 500);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Download(string documentId)
+        {
+            try
+            {
+                var appFile = await _documentRepository.Find(documentId);
+                if (appFile == null)
+                {
+                    return BadRequest("Document not found!");
+                }
+                return File(appFile.Content, appFile.ContentType, appFile.EncodedName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error occurred downloading document {documentId}");
+            }
+            return Problem("Error occurred downloading document!", statusCode: 500);
         }
     }
 }

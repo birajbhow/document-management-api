@@ -7,7 +7,9 @@ namespace DocumentManagementApi.Models
         public string Id { get; set; }
 
         public byte[] Content { get; set; }
-                
+
+        public string ContentType { get; set; }
+
         public string EncodedName { get; set; }
         
         public long Size { get; set; }
