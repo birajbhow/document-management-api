@@ -13,7 +13,8 @@ Steps to run the application
     
   ii) List:
     
-    - Use the /api/document/list endpoint to list all the uploaded documents
+    - Use the /api/document/list endpoint to list all the uploaded documents in ascending order of name (default)
+    - Same endpoint can be used to change the order (asc/desc by name)
     
   iii) Delete:
     
