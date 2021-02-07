@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 namespace DocumentManagementApi.Tests
 {
+    [TestFixture]
     public class FileValidatorTests
     {
         private FileValidator _fileValidator;
