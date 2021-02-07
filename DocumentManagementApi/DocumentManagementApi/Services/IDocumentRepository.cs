@@ -10,7 +10,7 @@ namespace DocumentManagementApi.Services
     public interface IDocumentRepository
     {
         Task<bool> Process(IFormFile formFile);
-        Task<IEnumerable<Document>> GetAll();
+        Task<IEnumerable<Document>> GetAll(OrderBy orderBy);
         Task Delete(AppFile appFile);
         Task<AppFile> Find(string documentId);
     }

@@ -1,4 +1,5 @@
-﻿using DocumentManagementApi.Services;
+﻿using DocumentManagementApi.Models;
+using DocumentManagementApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -39,11 +40,11 @@ namespace DocumentManagementApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(OrderBy orderBy)
         {
             try
             {
-                var docs = await _documentRepository.GetAll();
+                var docs = await _documentRepository.GetAll(orderBy);
                 return Ok(docs);
             }
             catch(Exception ex)

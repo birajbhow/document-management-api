@@ -47,17 +47,24 @@ namespace DocumentManagementApi.Services
         }
 
         /// <summary>
-        /// Returns summary information about all the documents
+        /// Returns summary information about all the documents based on asc or desc order
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<Document>> GetAll()
+        public async Task<IEnumerable<Document>> GetAll(OrderBy orderBy)
         {
-            return await Task.Run(() => _context.File.Select(f => new Document
+            return await Task.Run(() =>
             {
-                Id = f.Id,
-                Name = f.EncodedName,
-                Size = f.Size
-            }).AsEnumerable());
+                var documents = _context.File
+                                .Select(f => new Document
+                                {
+                                    Id = f.Id,
+                                    Name = f.EncodedName,
+                                    Size = f.Size
+                                });
+                return orderBy == OrderBy.Ascending
+                    ? documents.OrderBy(d => d.Name)
+                    : documents.OrderByDescending(d => d.Name);
+            });
         }
 
         /// <summary>
@@ -89,8 +96,8 @@ namespace DocumentManagementApi.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, 
-                    $"{nameof(DocumentRepository)}: Error occurred processing the file {formFile.FileName}");                
+                _logger.LogError(ex,
+                    $"{nameof(DocumentRepository)}: Error occurred processing the file {formFile.FileName}");
             }
 
             return false;
